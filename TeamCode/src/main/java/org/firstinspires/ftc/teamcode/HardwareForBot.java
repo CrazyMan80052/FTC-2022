@@ -19,6 +19,9 @@ public class HardwareForBot {
 
     public DcMotor liftMotor = null;
 
+    public Servo pincher = null;
+
+    public Servo pincherRight = null;
     /* *//* Constructor *//*
     public HardwareForbot(){
 
@@ -36,6 +39,10 @@ public class HardwareForBot {
         rightFront = hwMap.get(DcMotor.class, "rightFront");
 
         liftMotor = hwMap.get(DcMotor.class, "liftMotor");
+
+        pincher = hwMap.get(Servo.class, "pincher");
+
+        pincherRight = hwMap.get(Servo.class, "pincherRight");
 
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);

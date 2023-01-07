@@ -63,6 +63,7 @@ public class DriverTeleOp extends OpMode
     private DcMotor rightFront = null;
     private DcMotor liftMotor = null;
     private Servo pincher = null; // aka intake servo
+    private Servo pincherRight = null;
 
     double yPower;
     double xPower;
@@ -92,6 +93,11 @@ public class DriverTeleOp extends OpMode
         leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+
+        //need to reverse the directions of the left motors cuz they are backwards
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -99,7 +105,10 @@ public class DriverTeleOp extends OpMode
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         pincher = hardwareMap.get(Servo.class, "pincher");
+        pincherRight = hardwareMap.get(Servo.class, "pincherRight");
+
         pincher.setDirection(Servo.Direction.FORWARD);
+        pincherRight.setDirection(Servo.Direction.FORWARD);
 
         final int STARTING_POS = liftMotor.getCurrentPosition();
         liftPosition = liftMotor.getCurrentPosition();
@@ -108,6 +117,8 @@ public class DriverTeleOp extends OpMode
         LOW_LEVEL = STARTING_POS - 0.2;
         MID_LEVEL = STARTING_POS - 0.6;
         HIGH_LEVEL = STARTING_POS - 1;
+
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
        // telemetry.addData("Status", "Initialized - Alana DriverTeleOp");
@@ -132,7 +143,7 @@ public class DriverTeleOp extends OpMode
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
 
-    public void setLiftMotorPower(double power)
+    public void allTheWay(double power)
     {
         if(power < 0)
         {
@@ -143,6 +154,27 @@ public class DriverTeleOp extends OpMode
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setPower(power);
+    }
+
+    public void setLiftPower(double power)
+    {
+        if(power < 0)
+        {
+            liftMotor.setTargetPosition(liftMotor.getCurrentPosition()-1);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if(power > 0){
+            liftMotor.setTargetPosition(liftMotor.getCurrentPosition()+1);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        //liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setPower(power);
+    }
+
+    public void liftTicks(int ticks, double power) {
+        //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setTargetPosition(ticks);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(power);
     }
 
@@ -161,23 +193,8 @@ public class DriverTeleOp extends OpMode
         diagonalPower = Range.clip(mecanum, -1,1);
         yPower = Range.clip(drive, -1, 1);
         xPower = Range.clip(drive, -1, 1);
-        liftPower = 0;
 
-
-      /*
-       if(gamepad2.x) {
-            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotor.setTargetPosition(5000);
-            liftMotor.setPower(.5);
-        }
-        else if(gamepad2.y) {
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotor.setTargetPosition(50);
-            liftMotor.setPower(-.5);
-        }
-        */
-/*
+        /* All of the drive motor telemetry data
         telemetry.addData("LEFT STICK-X", "gamepad1, leftstick-x: " + gamepad1.left_stick_x);
         telemetry.addData("LEFT STICK-Y", "gamepad1, leftstick-y: " + gamepad1.left_stick_y);
 
@@ -197,78 +214,72 @@ public class DriverTeleOp extends OpMode
 
         //telemetry.addData("Gang gang: ", "leftFRONT , RIGHTF , leftBACK , rightBACK ", leftFront.getCurrentPosition(), rightFront.getCurrentPosition(), leftBack.getCurrentPosition(), rightBack.getCurrentPosition());
         //telemetry.addData("targetPositonGang: ", "leftFRONT "+ leftFront.getTargetPosition(), "RIGHTF " +  rightFront.getTargetPosition(), "leftBACK" +   leftBack.getTargetPosition(), "rightBACK " + rightBack.getTargetPosition());
-      //  telemetry.update();
+        //telemetry.update();
+        //TODO make a way for lift to stop moving once it hits the top or the bottom
 
-        //LIFT MOTOR
-        /*
-       // up to mid level
-       if (gamepad2.y){
-            liftMotor.setPower(0.1);
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotor.setTargetPosition((int)(MID_LEVEL));
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        // up to low level
-        if(gamepad2.x){
-            liftMotor.setPower(0.1);
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotor.setTargetPosition((int)LOW_LEVEL);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }*
-
-         */
-        liftPower = gamepad2.left_stick.y;
-        liftPower = Range.clip(liftPower, -0.5, 0.5);
 
         liftPosition = liftMotor.getCurrentPosition();
+
         telemetry.addData("Lift Ticks: ", liftPosition);
-        if(gamepad2.left_stick.y < 0 && liftPosition > -3000) {
+        telemetry.addData("Gamepad 2 left Stick", gamepad2.left_stick_y);
+        telemetry.addData("This should be go up: ", gamepad2.left_stick_y < 0 && liftPosition > -3000);
+        telemetry.addData("Lift power: ", liftMotor.getPower());
+        //stick power
+        liftPower = gamepad2.left_stick_y;
+        liftPower = Range.clip(liftPower, -0.5, 0.5);
+
+        if(gamepad2.left_stick_y < 0 && liftPosition > -3000) {
+            liftPower = gamepad2.left_stick_y;
+            liftPower = Range.clip(liftPower, -0.5, 0.5);
             liftMotor.setPower(liftPower);
         }
-        if(gamepad2.left_stick.y > 0 && liftPosition < -100) {
+        if(gamepad2.left_stick_y > 0 && liftPosition < -100) {
+            liftPower = gamepad2.left_stick_y;
+            liftPower = Range.clip(liftPower, -0.5, 0.5);
             liftMotor.setPower(liftPower);
         }
 
-        // up to high level
+        //low
         /*
-        if(gamepad2.y){
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            setLiftMotorPower(-0.80);
+        if(gamepad2.dpad_right) {
+            liftTicks(-1300, -0.5);
         }
+        //middle
+        if(gamepad2.dpad_up){
+            liftTicks(-2100, -0.5);
+        }
+        //High level
+        if(gamepad2.dpad_left) {
+            liftTicks(-2900, -0.5);
+        }
+        // stop lift motor
+        if(gamepad2.dpad_down){
+            liftTicks(-25, 0.5);
+        }
+        if(gamepad2.b) {
+            liftTicks(-200, -0.5);
+        }
+        \*/
         telemetry.addData("targetPosition after Y: ", "Motor Target Position " + liftMotor.getTargetPosition());
         telemetry.addData("targetPosition after Y: ", "Motor Current Position " + liftMotor.getCurrentPosition());
-        telemetry.update();
 
-        // stop lift motor
-        if(gamepad2.a){
-            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setLiftMotorPower(0.55); //goes back down with negative power values
-          // liftMotor.setPower(0.0);
-        }
-        */
-       /* if(gamepad2.b){
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            int pos = liftMotor.getTargetPosition();
-            liftMotor.setTargetPosition(pos - 10);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setPower(0.5);
-            telemetry.addData("targetPosition: ", "Position " + liftMotor.getTargetPosition());
-            telemetry.update();
-        }*/
 
         //open and close intake servo
         if(gamepad2.left_bumper) {
-            pincher.setPosition(0.00);
+            pincher.setPosition(0.30);
+            pincherRight.setPosition(1);
+            telemetry.addData("ServoWork", pincher.getPosition());
         }
         if(gamepad2.right_bumper){
-            pincher.setPosition(1.00);
+            pincher.setPosition(0.47);
+            pincherRight.setPosition(0);
+            telemetry.addData("ServoWork", pincher.getPosition());
         }
 
         //LEFT STRAFE
         if(gamepad1.left_stick_x < 0) {
             double power = gamepad1.left_stick_x;
-            leftBack.setPower(power);
+            leftBack.setPower(-power);
             leftFront.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
@@ -276,13 +287,13 @@ public class DriverTeleOp extends OpMode
         // RIGHT STRAFE
         if(gamepad1.left_stick_x > 0) {
             double power = gamepad1.left_stick_x;
-            leftBack.setPower(power);
+            leftBack.setPower(-power);
             leftFront.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
         }
         else{
-            leftBack.setPower((yPower - turn - diagonalPower));
+            leftBack.setPower(-(yPower - turn - diagonalPower));
             rightFront.setPower((xPower + turn - diagonalPower));
             leftFront.setPower(-(yPower - turn + diagonalPower));
             rightBack.setPower(-(xPower + turn + diagonalPower));
@@ -294,82 +305,16 @@ public class DriverTeleOp extends OpMode
         telemetry.update();
     }
 
-    public void turnClockwise(double leftPower, double rightPower){
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-
-        leftBack.setPower(leftPower);
-        rightFront.setPower(rightPower);
-        leftFront.setPower(leftPower);
-        rightBack.setPower(rightPower);
-    }
-
-    public void turnCounterClockwise(double leftPower, double rightPower){
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        leftBack.setPower(leftPower);
-        rightFront.setPower(rightPower);
-        leftFront.setPower(leftPower);
-        rightBack.setPower(rightPower);
-    }
-
-    public void backward(double leftPower, double rightPower){
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-
-        leftBack.setPower(leftPower);
-        rightFront.setPower(rightPower);
-        leftFront.setPower(leftPower);
-        rightBack.setPower(rightPower);
-    }
-
-    public void forward(double yPower, double xPower){
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        leftBack.setPower(yPower);
-        rightFront.setPower(xPower);
-        leftFront.setPower(yPower);
-        rightBack.setPower(xPower);
-    }
-
-    public void strafeLeft(double power) {
-        leftBack.setPower(-power);
-        leftFront.setPower(power);
-        rightFront.setPower(-power);
-        rightBack.setPower(power);
-    }
-
-    public void strafeRight(double power) {
-        leftBack.setPower(power);
-        leftFront.setPower(-power);
-        rightFront.setPower(power);
-        rightBack.setPower(-power);
-    }
-
-    //conversion inches to ticks
-    public int inToTick(double inches) {
-        return (int) (inches * 31.658); //inches x tick/in
-    }
-
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
     public void stop() {
         leftBack.setPower(0);
-        leftFront.setPower(0);
+        //leftFront.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+        liftMotor.setPower(0);
     }
 
 }

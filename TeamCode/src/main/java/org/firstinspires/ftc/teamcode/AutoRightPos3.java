@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Autonomous(name = "GoesRightPos1")
-public class AutonomousFTC extends LinearOpMode {
+@Autonomous(name = "GoesRightPos3")
+public class AutoRightPos3 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -60,7 +60,7 @@ public class AutonomousFTC extends LinearOpMode {
         openServo();
         backward(5.1, 0.5);
         liftTicks(-10, 0.5);
-        strafeLeft(69, 0.8);
+        strafeLeft(15, 0.8);
 
         //Position two
         //forward(609.6, 0.5);
@@ -183,11 +183,11 @@ public class AutonomousFTC extends LinearOpMode {
 
     //Servo Open
     public void openServo() {
-        pincher.setPosition(0.35);
+        pincher.setPosition(0.00);
         sleep(2000);
     }
     public void closeServo() {
-        pincher.setPosition(0.53);
+        pincher.setPosition(1.00);
         sleep(2000);
     }
 
@@ -199,3 +199,4 @@ public class AutonomousFTC extends LinearOpMode {
     //}
 
 }
+
