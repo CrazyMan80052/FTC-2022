@@ -97,6 +97,7 @@ public class DriverTeleOp extends OpMode
         //need to reverse the directions of the left motors cuz they are backwards
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
@@ -118,7 +119,6 @@ public class DriverTeleOp extends OpMode
         MID_LEVEL = STARTING_POS - 0.6;
         HIGH_LEVEL = STARTING_POS - 1;
 
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
        // telemetry.addData("Status", "Initialized - Alana DriverTeleOp");
@@ -194,7 +194,7 @@ public class DriverTeleOp extends OpMode
         yPower = Range.clip(drive, -1, 1);
         xPower = Range.clip(drive, -1, 1);
 
-        /* All of the drive motor telemetry data
+        // All of the drive motor telemetry data
         telemetry.addData("LEFT STICK-X", "gamepad1, leftstick-x: " + gamepad1.left_stick_x);
         telemetry.addData("LEFT STICK-Y", "gamepad1, leftstick-y: " + gamepad1.left_stick_y);
 
@@ -210,7 +210,7 @@ public class DriverTeleOp extends OpMode
         telemetry.addData("targetPositonGang: ", "PositionRF " + rightFront.getTargetPosition());
         telemetry.addData("targetPositonGang: ", "PositionLB " + leftBack.getTargetPosition());
         telemetry.addData("targetPositonGang: ", "PositionRB " + rightBack.getTargetPosition());
-*/
+        //*/
 
         //telemetry.addData("Gang gang: ", "leftFRONT , RIGHTF , leftBACK , rightBACK ", leftFront.getCurrentPosition(), rightFront.getCurrentPosition(), leftBack.getCurrentPosition(), rightBack.getCurrentPosition());
         //telemetry.addData("targetPositonGang: ", "leftFRONT "+ leftFront.getTargetPosition(), "RIGHTF " +  rightFront.getTargetPosition(), "leftBACK" +   leftBack.getTargetPosition(), "rightBACK " + rightBack.getTargetPosition());
@@ -239,40 +239,36 @@ public class DriverTeleOp extends OpMode
             liftMotor.setPower(liftPower);
         }
 
-        //low
-        /*
         if(gamepad2.dpad_right) {
-            liftTicks(-1300, -0.5);
+            liftTicks(1300, -0.5);
         }
         //middle
         if(gamepad2.dpad_up){
-            liftTicks(-2100, -0.5);
+            liftTicks(2100, -0.5);
         }
         //High level
         if(gamepad2.dpad_left) {
-            liftTicks(-2900, -0.5);
+            liftTicks(2900, -0.5);
         }
         // stop lift motor
         if(gamepad2.dpad_down){
-            liftTicks(-25, 0.5);
+            liftTicks(25, 0.5);
         }
         if(gamepad2.b) {
-            liftTicks(-200, -0.5);
+            liftTicks(200, -0.5);
         }
-        \*/
+
         telemetry.addData("targetPosition after Y: ", "Motor Target Position " + liftMotor.getTargetPosition());
         telemetry.addData("targetPosition after Y: ", "Motor Current Position " + liftMotor.getCurrentPosition());
 
 
         //open and close intake servo
         if(gamepad2.left_bumper) {
-            pincher.setPosition(0.30);
-            pincherRight.setPosition(1);
+            pincher.setPosition(0.0);
             telemetry.addData("ServoWork", pincher.getPosition());
         }
         if(gamepad2.right_bumper){
-            pincher.setPosition(0.47);
-            pincherRight.setPosition(0);
+            pincher.setPosition(1);
             telemetry.addData("ServoWork", pincher.getPosition());
         }
 

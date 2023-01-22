@@ -49,7 +49,7 @@ public class AutoRightPos3 extends LinearOpMode {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
-        //Position one
+        //Position 3
         closeServo();
         liftTicks(-150, 0.7);
         forward(26.0, 0.5);

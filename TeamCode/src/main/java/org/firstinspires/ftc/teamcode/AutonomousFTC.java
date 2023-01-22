@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Autonomous(name = "GoesRightPos1")
+@Autonomous(name = "Auto")
 public class AutonomousFTC extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -44,22 +44,20 @@ public class AutonomousFTC extends LinearOpMode {
         pincher = hardwareMap.get(Servo.class, "pincher");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         //Position one
-        closeServo();
-        liftTicks(-150, 0.7);
+        //closeServo();
+        //liftTicks(-150, 0.7);
         forward(26.0, 0.5);
         strafeRight(39.9, 0.5);
-        liftTicks(-2900, 0.8);
+        //liftTicks(-2900, 0.8);
         forward(5.8, 0.2);
         //liftTicks(-2500, 0.5);
-        openServo();
+        //openServo();
         backward(5.1, 0.5);
-        liftTicks(-10, 0.5);
+        //liftTicks(-10, 0.5);
         strafeLeft(69, 0.8);
 
         //Position two

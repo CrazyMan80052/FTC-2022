@@ -22,9 +22,7 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -39,8 +37,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "La Camera Right")
-public class AutoCamera extends LinearOpMode
+@Autonomous(name = "La Camera Left")
+public class CameraAutoLeft extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -205,52 +203,53 @@ public class AutoCamera extends LinearOpMode
             telemetry.update();
         }
 
-        //autoMethods.liftTicks(-50, 0.5);
+        //TODO: Fix the values to work for the left side
         /* Actually do something useful */
         //default positon is positon 2
         if(tagOfInterest == null || tagOfInterest.id == pos2) {
             //write the code to get to the position 2 move forward
             closeServo();
             liftTicks(150, 0.7);
-            forward(26.0, 0.5);
-            strafeRight(39.9, 0.5);
+            forward(26.8, 0.5);
+            strafeLeft(39.7, 0.5);
             liftTicks(2900, 0.8);
-            forward(5.8, 0.2);
-            //liftTicks(-2500, 0.5);
+            forward(6.8, 0.2);
+            liftTicks(2500, 0.5);
             openServo();
             backward(5.1, 0.5);
+            //liftTicks(-25,0.5);
             liftTicks(10, 0.5);
-            strafeLeft(44, 0.8);
+            strafeRight(44, 0.8);
         }
         else if (tagOfInterest.id == pos1){
             //write the code to reach left position/positon 1
-            //telemetry.addLine("It detected position 1");
-            //Position one
-            closeServo();
-            liftTicks(150, 0.3);
-            forward(26.0, 0.5);
-            strafeRight(39.9, 0.5);
-            liftTicks(2900, 0.3);
-            forward(5.8, 0.2);
-            //liftTicks(-2500, 0.5);
-            openServo();
-            backward(5.1, 0.5);
-            liftTicks(10, 0.3);
-            strafeLeft(69, 0.8);
-        }
-        else if(tagOfInterest.id == pos3) {
-            //Position one
             closeServo();
             liftTicks(150, 0.7);
-            forward(26.0, 0.5);
-            strafeRight(39.9, 0.5);
+            forward(26.8, 0.5);
+            strafeLeft(39.7, 0.5);
             liftTicks(2900, 0.8);
-            forward(5.8, 0.2);
-            //liftTicks(-2500, 0.5);
+            forward(6.8, 0.2);
+            liftTicks(2500, 0.5);
             openServo();
             backward(5.1, 0.5);
+            //liftTicks(-25,0.5);
             liftTicks(10, 0.5);
-            strafeLeft(15, 0.8);
+            strafeRight(71, 0.8);
+        }
+        else if(tagOfInterest.id == pos3) {
+            //Position three
+            closeServo();
+            liftTicks(150, 0.3);
+            forward(26.8, 0.5);
+            strafeLeft(39.7, 0.5);
+            liftTicks(2900, 0.3);
+            forward(6.8, 0.2);
+            liftTicks(2500, 0.3);
+            openServo();
+            backward(5.1, 0.5);
+            //liftTicks(-25,0.5);
+            liftTicks(10, 0.3);
+            strafeRight(16, 0.8);
         }
         //telemetry.update();
 
@@ -302,7 +301,6 @@ public class AutoCamera extends LinearOpMode
                 rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
-
              */
             telemetry.addData("gang gang: ", "leftFRONT " + leftFront.getCurrentPosition());
             telemetry.addData("gang gang: ", "rightFRONT " + rightFront.getCurrentPosition());
